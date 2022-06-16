@@ -19,10 +19,16 @@
 					<th scope="col">제목</th>
 					<th scope="col">작성자</th>
 					<th scope="col">작성일</th>
-				</tr>
+				</tr>   
 			</thead>
 			<tbody>
+				<tr v-for="boardItem in boardList" :key="boardItem.no">
+					<td>{{boardItem.no}}</td>
+					<td>{{boardItem.subject}}</td>
+					<td>{{boardItem.writer}}</td>
+					<td>{{boardItem.writedate}}</td>
 
+				</tr>
 			</tbody>
 		</table>
 	</div>
@@ -31,6 +37,23 @@
 <script>
 export default {
 	name : 'BoardList',
+	data() {
+		return {
+			boardList: []
+		}
+	},
+	methods: {
+		getBoardList() {
+			this.axios.get('http://localhost:9000/boards').then((res) => {
+				this.boardList = res.data.data;
+			}).catch((err) => {
+				console.log(err);
+			})
+		}
+	},
+	mounted() {
+		this.getBoardList();
+	}
    
 };
 </script>
