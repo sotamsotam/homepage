@@ -9,19 +9,19 @@
 			<tbody>
 				<tr>
 					<th scope="row">제목</th>
-					<td class="title">{{boardItem.subject}}</td>
+					<td class="title"></td>
 				</tr>
 				<tr>
 					<th scope="row">내용</th>
-					<td>{{boardItem.content}}</td>
+					<td></td>
 				</tr>
 				<tr>
 					<th scope="row">작성자</th>
-					<td>{{boardItem.writer}}</td>
+					<td></td>
 				</tr>
 				<tr>
 					<th scope="row">작성일자</th>
-					<td>{{boardItem.writedate}}</td>
+					<td></td>
 				</tr>
 			</tbody>
 		</table>
@@ -40,43 +40,7 @@
 <script>
 export default {
 	name : 'BoardView',
-    data() {
-        return {
-            boardItem: {}
-        }
-    },
-    methods: {
-        getBoardItem() {
-            this.axios.get('http://localhost:9000/boards/' + this.$route.query.boardNo).then((res) => {
-                this.boardItem = res.data.data;
-            }).catch((err) => {
-                console.log(err);
-            })
-        },
-        boardListClick() {
-            this.$router.go(-1);
-        },
-        boardEditClick() {
-            this.$router.push({name: 'BoardEdit', query: {boardNo: this.boardItem.no}});
-        },
-        boardDeleteClick() {
-            let result = confirm("정말 삭제하시겠습니까?");
-            if(result) {
-                this.axios.delete('http://localhost:9000/boards/' + this.$route.query.boardNo).then((res) => {
-                    if(res.data.success == true) {
-                        alert("삭제되었습니다");
-                        this.$router.push({name: 'BoardList'});
-                    }
-                }).catch((err) => {
-                    console.log(err); 
-                    alert("오류가 발생하였습니다");
-                })
-            }
-        }
-    },
-    mounted() {
-        this.getBoardItem();
-    }
+   
 };
 </script>
 

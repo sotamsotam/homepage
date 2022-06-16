@@ -22,12 +22,7 @@
 				</tr>
 			</thead>
 			<tbody>
-                <tr v-for="boardItem in boardList" :key="boardItem.no">
-                    <td><span @click="boardNoClick(boardItem)">{{boardItem.no}}</span></td>
-                    <td><router-link :to="{name: 'BoardView', query: {boardNo: boardItem.no}}">{{boardItem.subject}}</router-link></td>
-                    <td>{{boardItem.writer}}</td>
-                    <td>{{boardItem.writedate}}</td>
-                </tr>
+
 			</tbody>
 		</table>
 	</div>
@@ -36,26 +31,7 @@
 <script>
 export default {
 	name : 'BoardList',
-    data() {
-        return {
-            boardList: []
-        }
-    },
-    methods: {
-        getBoardList() {
-            this.axios.get('http://localhost:9000/boards').then((res) => {
-                this.boardList = res.data.data;
-            }).catch((err) => {
-                console.log(err);
-            })
-        },
-        boardNoClick(boardItem) {
-            this.$router.push({name : 'BoardView', query : {boardNo : boardItem.no}});
-        }
-    },
-    mounted() {
-        this.getBoardList();
-    }
+   
 };
 </script>
 

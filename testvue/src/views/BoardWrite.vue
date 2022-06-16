@@ -33,48 +33,7 @@
 <script>
 export default {
 	name : 'BoardWrite',
-    data() {
-        return {
-            writer: '',
-            subject: '',
-            content: ''
-        }
-    },
-    methods: {
-        boardSaveClick() {
-            if(this.writer == '') {
-                alert("작성자를 입력하세요");
-                this.$refs.writerInput.focus();
-                return;
-            }else if(this.subject == '') {
-                alert("제목을 입력하세요");
-                this.$refs.subjectInput.focus();
-                return;
-            }else if(this.content == '') {
-                alert("제목을 입력하세요");
-                this.$refs.contentTextarea.focus();
-                return;
-            }
-            let boardItem = {writer: this.writer, subject: this.subject, content: this.content};
-            let result = confirm("등록하시겠습니까?");
-            if(result) {
-                this.axios.post('http://localhost:9000/boards', boardItem).then((res) => {
-                    if(res.data.success == true) {
-                        alert("등록되었습니다");
-                        this.$router.push({name: 'BoardList'});
-                    }else {
-                        alert("등록중 오류가 발생했습니다.");
-                    }
-                }).catch((err) => {
-                    console.log(err);
-                    alert("오류가 발생했습니다. 관리자에게 문의해 주세요");
-                })
-            } 
-        },
-        boardCancelClick() {
-            this.$router.go(-1);
-        }
-    }
+    
 };
 </script>
 
