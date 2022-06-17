@@ -33,52 +33,7 @@
 <script>
 export default {
 	name : 'BoardEdit',
-	data() {
-		return {
-			boardItem: {}
-		}
-	},
-	methods: {
-		getBoardItem() {
-			this.axios.get('http://localhost:9000/boards/' + this.$route.query.boardNo).then((res) => {
-				this.boardItem = res.data.data;
-			}).catch((err) => {
-				console.log(err);
-			})
-		},
-		boardUpdateClick() {
-			if(this.boardItem.subject == '') {
-				alert("제목을 입력해 주세요");
-				this.$refs.subjectInput.focus();
-				return;
-			}else if(this.boardItem.content == '') {
-				alert("내용을 입력해 주세요");
-				this.$refs.contentTextarea.focus();
-				return;
-			}
-			let result = confirm("수정하시겠습니까?");
-			if(result) {
-				this.axios.put('http://localhost:9000/boards/' + this.$route.query.boardNo, this.boardItem).then((res) => {
-					if(res.data.success == true) {
-						alert("수정되었습니다");
-						this.$router.push({name: 'BoardList'});
-					}else {
-						alert("오류가 발생하였습니다");
-					}
-				}).catch((err) => {
-					console.log(err);
-					alert("오류가 발생하였습니다. 관리자에게 문의해 주세요");
-				})
-			}
-		},
-		boardCancelClick() {
-			this.$router.go(-1);
-		}
-	},
-	mounted() {
-		this.getBoardItem();
-		this.$refs.subjectInput.focus();
-	}
+	
 };
 </script>
 
