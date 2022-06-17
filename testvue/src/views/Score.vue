@@ -1,12 +1,12 @@
 <template>
 	<div class="score">
-		<div></div>
-		<div>랜덤 점수 : </div>
-		<div>합계 점수 : </div>
-		<div class="result"></div>
+		<div>{{ counter }}</div>
+		<div>랜덤 점수 : {{score }}</div>
+		<div>합계 점수 : {{total }}</div>
+		<div class="result">{{totalState }}</div>
 		<div class="buttons">
-			<button class="button blue">실행</button>
-			<button class="button">새로고침</button>
+			<button @click="doScore()" class="button blue">실행</button>
+			<button @click="reset()" class="button">새로고침</button>
 		</div>
 	</div>
 </template>
@@ -14,7 +14,28 @@
 <script>
 export default {
 	name: 'Score',
-   
+    computed: {
+        total() {
+            return this.$store.state.total;
+        },
+        score() {
+            return this.$store.state.score;
+        },
+        counter() {
+            return this.$store.getters['getCountString'];
+        },
+        totalState() {
+            return this.$store.getters['getTotalState'];
+        }
+    },
+    methods: {
+        doScore() {
+            this.$store.dispatch('doScore');
+        },
+        reset() {
+            this.$store.dispatch('reset')
+        }
+    }
 };
 </script>
 
