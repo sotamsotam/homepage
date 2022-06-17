@@ -31,23 +31,7 @@
 <script>
 export default {
 	name : 'BoardList',
-	data() {
-		return {
-			boardList: []
-		}
-	},
-	methods: {
-		getBoardList() {
-			this.axios.get('http://localhost:9000/boards').then((res) => {
-				this.boardList = res.data.data;
-			}).catch((err) => {
-				console.log(err);
-			})
-		}
-	},
-	mounted() {
-		this.getBoardList();
-	}
+
    
 };
 </script>
