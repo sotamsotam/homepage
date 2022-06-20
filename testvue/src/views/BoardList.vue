@@ -3,7 +3,7 @@
 		<h1>This is an board list page</h1>
         <div class="buttons">
             <div class="right">
-                <router-link to="/boardwrite" class="button blue"><span>쓰기</span></router-link>
+                <router-link :to="{name: 'BoardWrite'}" class="button blue"><span>쓰기</span></router-link>
             </div>
         </div>
 		<table>

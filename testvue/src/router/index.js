@@ -18,25 +18,33 @@ const routes = [
   },
   {
     path: '/board',
-    name: 'BoardList',
-    component: () => import('../views/BoardList.vue')
-  },
-  {
-    path: '/boardview',
-    name: 'BoardView',
-    component: () => import('../views/BoardView.vue')
-  },
-  {
-    path: '/boardwrite',
-    name: 'BoardWrite',
-    component: () => import('../views/BoardWrite.vue'),
-    meta: { requireLogin: true }
-  },
-  {
-    path: '/boardedit',
-    name: 'BoardEdit',
-    component: () => import('../views/BoardEdit.vue'),
-    meta: { requireLogin: true }
+    name: 'Board',
+    component: () => import('../views/Board.vue'),
+    meta: { requireLogin: true },
+    children: [
+      {
+        path: '',
+        name: 'BoardList',
+        component: () => import('../views/BoardList.vue')
+      },
+      {
+        path: 'boardview',
+        name: 'BoardView',
+        component: () => import('../views/BoardView.vue')
+      },
+      {
+        path: 'boardwrite',
+        name: 'BoardWrite',
+        component: () => import('../views/BoardWrite.vue'),
+        meta: { requireLogin: true }
+      },
+      {
+        path: 'boardedit',
+        name: 'BoardEdit',
+        component: () => import('../views/BoardEdit.vue'),
+        meta: { requireLogin: true }
+      }
+    ]
   },
   {
     path: '/score',
@@ -58,11 +66,13 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-	console.log(to);
-	if (to.meta.requireLogin) {
+	if (to.matched.some(record => record.meta.requireLogin)) {
 		const isLogin = store.getters['loginStore/isLogin'];
 		if (!isLogin) {
-			next('/login?returnUrl=' + to.fullPath);
+			var result = confirm("로그인되어야 사용 가능합니다.\n로그인 하시겠습니까?");
+			if (result) {
+				next({name: 'Login', query: { returnUrl: to.fullPath }});
+			}
 		} else {
 			next();
 		}
