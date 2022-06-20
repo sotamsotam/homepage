@@ -40,6 +40,13 @@ export default {
 				this.$refs.memberPasswordInput.focus();
 				return;
 			}
+            let memberInfo = { id: this.memberId, password: this.memberPassword };
+            this.$store.dispatch("loginStore/doLogin", memberInfo).then(() => {
+                const returnUrl = window.location.search.replace(/^\?returnUrl=/, "");
+                this.$router.push(returnUrl);
+            }).catch((err) => {
+                this.errorMessage = err.response.data.errormessage;
+            });
 		},
 		doCancel() {
 			this.$router.push('../');
