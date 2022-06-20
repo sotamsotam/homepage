@@ -31,7 +31,7 @@
             </div>
             <div class="left">
                 <button class="button" v-if="isEditable" @click="boardEditClick">수정</button>
-                <button class="button" v-if="iseditable" @click="boardDeleteClick">삭제</button>
+                <button class="button" v-if="isEditable" @click="boardDeleteClick">삭제</button>
             </div>
         </div>
 	</div>
