@@ -12,30 +12,17 @@
 </template>
 
 <script>
+import { mapState, mapGetters, mapActions } from 'vuex';
+
 export default {
 	name: 'Score',
-    computed: {
-        total() {
-            return this.$store.state.total;
-        },
-        score() {
-            return this.$store.state.score;
-        },
-        counter() {
-            return this.$store.getters['getCountString'];
-        },
-        totalState() {
-            return this.$store.getters['getTotalState'];
-        }
-    },
-    methods: {
-        doScore() {
-            this.$store.dispatch('doScore');
-        },
-        reset() {
-            this.$store.dispatch('reset')
-        }
-    }
+	computed: {
+		...mapState('scoreStore', ['total', 'score']),
+		...mapGetters('scoreStore', {counter:'getCountString', totalState:'getTotalState'})
+	},
+	methods: {
+		...mapActions('scoreStore', ['doScore', 'reset'])
+	}
 };
 </script>
 
