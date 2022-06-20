@@ -48,6 +48,36 @@ const loginStore = {
             state.memberId = '';
             state.accessToken = '';
             state.refreshToken = '';
+            localStorage.removeItem("testvue.login");
+        },
+        saveStateToStorage(state) {
+            // localStorage.setItem("testvue.login.memberId", state.memberId);
+            // localStorage.setItem("testvue.login.accessToken", state.accessToken);
+            // localStorage.setItem("testvue.login.refreshToken", state.refreshToken);
+            localStorage.setItem("testvue.login", JSON.stringify(state));
+        },
+        readStateFromStorage(state) {
+            // if (localStorage.getItem("testvue.login.memberId") != null) {
+            //     state.memberId = localStorage.getItem("testvue.login.memberId");
+            // }
+            // if (localStorage.getItem("testvue.login.accessToken") != null) {
+            //     state.accessToken = localStorage.getItem("testvue.login.accessToken");
+            // }
+            // if (localStorage.getItem("testvue.login.refreshToken") != null) {
+            //     state.refreshToken = localStorage.getItem("testvue.login.refreshToken");
+            // }
+            if (localStorage.getItem("testvue.login") != null) {
+                let storage = JSON.parse(localStorage.getItem("testvue.login"));
+                if (storage.memberId != null) {
+                    state.memberId = storage.memberId;
+                }
+                if (storage.accessToken != null) {
+                    state.accessToken = storage.accessToken;
+                }
+                if (storage.memberId != null) {
+                    state.refreshToken = storage.refreshToken;
+                }
+            }
         }
 	},
 	actions: {
@@ -61,6 +91,7 @@ const loginStore = {
                     commit('setMmemberId', memberInfo.id);
                     commit('setAccessToken', res.data.accessToken);
                     commit('setRefreshToken', res.data.refreshToken);
+                    commit('saveStateToStorage');
                     axios.defaults.headers.common['Access-Token'] = res.data.accessToken;
                     result = true;
                 } else {
@@ -123,6 +154,9 @@ const loginStore = {
                         reject(resultErr);
                     }
             });
+        },
+        doReadStateFromStorage({commit}) {
+            commit('readStateFromStorage');
         },
         doLogout({commit}) {
             commit('reset');
