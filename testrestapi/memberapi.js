@@ -5,10 +5,9 @@ const config = require('./config.js');
 const jwt = require('jsonwebtoken');
 
 let memberList = [
-    {id:"testid1", password:"testpwd1", name:"홍길동", refreshToken:""},
-    {id:"testid2", password:"testpwd2", name:"김철수", refreshToken:""},
-    {id:"testid3", password:"testpwd3", name:"이영희", refreshToken:""}
-];
+	{id:"testid1", password:"testpwd1", name:"홍길동", refreshToken:""},
+	{id:"testid2", password:"testpwd2", name:"김철수", refreshToken:""},
+	{id:"testid3", password:"testpwd3", name:"이영희", refreshToken:""}];
 
 router.post('/login', async function(req, res, next) {
 	console.log("REST API Post Method - Member Login And JWT Sign");
@@ -29,7 +28,7 @@ router.post('/login', async function(req, res, next) {
 						},
 						config.secret,
 						{
-							expiresIn : '10m'
+							expiresIn : '1m'
 						},
 						(err, token) => {
 							if (err) {
@@ -97,6 +96,27 @@ router.post('/refresh', async function(req, res, next) {
 	} else {
 		res.status(401).json({success:false, errormessage:'id is not identical'});
 	}
+	let refreshPayload = "";
+	let errorMessageRT = "";
+
+	// Refresh-Token Verify
+	try {
+		refreshPayload = await new Promise((resolve, reject) => {
+			jwt.verify(refreshToken, config.secret, 
+				(err, decoded) => {
+					if (err) {
+						reject(err);
+					} else {
+						resolve(decoded);
+					}
+				});
+		});
+	} catch(err) {
+		errorMessageRT = err;
+	}
+	console.log("Refresh-Token Payload : ");
+	console.log(refreshPayload);
+	console.log("Refresh-Token Verify : " + errorMessageRT);
 	let accessPayload = "";
 	let errorMessageAT = "";
 
@@ -132,7 +152,7 @@ router.post('/refresh', async function(req, res, next) {
 						},
 						config.secret,
 						{
-							expiresIn : '10m'
+							expiresIn : '1m'
 						},
 						(err, token) => {
 							if (err) {

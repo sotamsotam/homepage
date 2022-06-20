@@ -41,35 +41,47 @@ export default {
         }
     },
     methods: {
-        boardSaveClick() {
-            if(this.writer == '') {
-                alert("작성자를 입력하세요");
-                this.$refs.writerInput.focus();
-                return;
-            }else if(this.subject == '') {
-                alert("제목을 입력하세요");
+        async boardSaveClick() {
+            if (this.subject == "") {
+                alert("제목을 입력하세요.");
                 this.$refs.subjectInput.focus();
                 return;
-            }else if(this.content == '') {
-                alert("제목을 입력하세요");
+            } else if (this.content == "") {
+                alert("내용을 입력하세요.");
                 this.$refs.contentTextarea.focus();
                 return;
             }
-            let boardItem = {writer: this.writer, subject: this.subject, content: this.content};
-            let result = confirm("등록하시겠습니까?");
-            if(result) {
-                this.axios.post('http://localhost:9000/boards', boardItem).then((res) => {
-                    if(res.data.success == true) {
-                        alert("등록되었습니다");
-                        this.$router.push({name: 'BoardList'});
-                    }else {
-                        alert("등록중 오류가 발생했습니다.");
+
+            var result = confirm("등록하시겠습니까?");
+            if (result) {
+                // accessToken이 만료되었는지 확인합니다.
+                var isAccessTokenExpire = this.$store.getters['loginStore/isAccessTokenExpire'];
+                if (isAccessTokenExpire) {
+                    // accessToken이 만료되면 토큰 재발급을 진행합니다.
+                    try {
+                        await this.$store.dispatch("loginStore/doRefreshToken");
+                        isAccessTokenExpire = false;
+                    } catch(err) {
+                        alert("accessToken이 만료되었습니다.\n다시 로그인 해주시기 바랍니다.\n" + err.response.data.errormessage);
                     }
-                }).catch((err) => {
-                    console.log(err);
-                    alert("오류가 발생했습니다. 관리자에게 문의해 주세요");
-                })
-            } 
+                }
+                        
+                if (!isAccessTokenExpire) {
+                    let boardItem = { subject : this.subject, content : this.content };
+                    this.axios.post("http://localhost:9000/boards", boardItem).then((res)=>{
+                        console.log(res);
+                        if (res.data.success == true) {
+                            alert("등록되었습니다.");
+                            this.$router.push({name : 'BoardList'});
+                        } else {
+                            alert("등록되지 않았습니다.");
+                        }
+                    }).catch((err) => {
+                        console.log(err);
+                        alert("등록되지 않았습니다.");
+                    });
+                }
+            }
         },
         boardCancelClick() {
             this.$router.go(-1);
