@@ -58,7 +58,8 @@ export default {
 			}
 			let result = confirm("수정하시겠습니까?");
 			if(result) {
-				this.axios.put('http://localhost:9000/boards/' + this.$route.query.boardNo, this.boardItem).then((res) => {
+				let boardItem = {subject: this.boardItem.subject, content: this.boardItem.content};
+				this.axios.put('http://localhost:9000/boards/' + this.$route.query.boardNo, boardItem).then((res) => {
 					if(res.data.success == true) {
 						alert("수정되었습니다");
 						this.$router.push({name: 'BoardList'});

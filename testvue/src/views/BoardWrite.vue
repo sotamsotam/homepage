@@ -9,7 +9,7 @@
             <tbody>
                 <tr>
                     <th scope="row">작성자</th>
-                    <td><input type="text" placeholder="아이디를 입력하세요." ref="writerInput" v-model.trim="writer"></td>
+                    <td>{{writer}}</td>
                 </tr>
                 <tr>
                     <th scope="row">제목</th>
@@ -35,7 +35,7 @@ export default {
 	name : 'BoardWrite',
     data() {
         return {
-            writer: '',
+            writer: this.$store.state.loginStore.memberId,
             subject: '',
             content: ''
         }
