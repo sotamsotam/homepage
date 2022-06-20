@@ -16,6 +16,7 @@ app.use(function (req, res, next) {
 });
 
 app.use('/boards', require('./boardapi'));
+app.use('/members', require('./memberapi'));
 
 app.listen(9000, () => {
 	console.log('Listening...');
