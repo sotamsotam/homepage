@@ -5,9 +5,9 @@ const config = require('./config.js');
 const jwt = require('jsonwebtoken');
 
 let memberList = [
-    {id:"testid1", password:"testpwd1", name:"홍길동"},
-    {id:"testid2", password:"testpwd2", name:"김철수"},
-    {id:"testid3", password:"testpwd3", name:"이영희"}
+    {id:"testid1", password:"testpwd1", name:"홍길동", refreshToken:""},
+    {id:"testid2", password:"testpwd2", name:"김철수", refreshToken:""},
+    {id:"testid3", password:"testpwd3", name:"이영희", refreshToken:""}
 ];
 
 router.post('/login', async function(req, res, next) {
@@ -17,12 +17,42 @@ router.post('/login', async function(req, res, next) {
 	var memberItem = memberList.find(object => object.id == memberId);
 	if (memberItem != null) {
 		if (memberItem.password == memberPassword) {
-			const secret = "005c9780fe7c11eb89b4e39719de58a5";
+			let accessToken = "";
+			let errorMessageAT = "";
+			
+			// Access-Token
 			try {
-				const accessToken = await new Promise((resolve, reject) => {
+				accessToken = await new Promise((resolve, reject) => {
 					jwt.sign({
 							memberId : memberItem.id,
 							memberName : memberItem.name
+						},
+						config.secret,
+						{
+							expiresIn : '10m'
+						},
+						(err, token) => {
+							if (err) {
+								reject(err);
+							} else {
+								resolve(token);
+							}
+						});
+				});
+			} catch(err) {
+				errorMessageAT = err;
+			}
+			console.log("Access-Token : " + accessToken);
+			console.log("Access-Token Error : " + errorMessageAT);
+			
+			let refreshToken = "";
+			let errorMessageRT = "";
+
+			// Refresh-Token
+			try {
+				refreshToken = await new Promise((resolve, reject) => {
+					jwt.sign({
+							memberId : memberItem.id
 						},
 						config.secret,
 						{
@@ -36,16 +66,100 @@ router.post('/login', async function(req, res, next) {
 							}
 						});
 				});
-				res.json({success:true, accessToken:accessToken});
 			} catch(err) {
-				console.log(err);
+				errorMessageRT = err;
+			}
+			console.log("Refresh-Token : " + refreshToken);
+			console.log("Refresh-Token Error : " + errorMessageRT);
+			
+			if (errorMessageAT == "" && errorMessageRT == "") {
+				memberItem.refreshToken = refreshToken;
+				res.json({success:true, accessToken:accessToken, refreshToken:refreshToken});
+			} else {
 				res.status(401).json({success:false, errormessage:'token sign fail'});
 			}
 		} else {
-			res.status(401).json({success:false, errormessage:'id and password are not identical'});
+			res.status(401).json({success:false, errormessage:'id and password is not identical'});
 		}
 	} else {
-		res.status(401).json({success:false, errormessage:'id and password are not identical'});
+		res.status(401).json({success:false, errormessage:'id and password is not identical'});
+	}
+});
+
+router.post('/refresh', async function(req, res, next) {
+	console.log("REST API Post Method - Member JWT Refresh");
+	const memberId = req.body.id;
+	const accessToken = req.body.accessToken;
+	const refreshToken = req.body.refreshToken;
+	var memberItem = memberList.find(object => object.id == memberId);
+	if (memberItem != null) {
+		// 아래 코드들이 들어 옵니다. 
+	} else {
+		res.status(401).json({success:false, errormessage:'id is not identical'});
+	}
+	let accessPayload = "";
+	let errorMessageAT = "";
+
+	// Access-Token Verify
+	try {
+		accessPayload = await new Promise((resolve, reject) => {
+			jwt.verify(accessToken, config.secret, {ignoreExpiration: true}, 
+				(err, decoded) => {
+					if (err) {
+						reject(err);
+					} else {
+						resolve(decoded);
+					}
+				});
+		});
+	} catch(err) {
+		errorMessageAT = err;
+	}
+	console.log("Access-Token Payload : ");
+	console.log(accessPayload);
+	console.log("Access-Token Verify : " + errorMessageAT);
+	if (errorMessageRT == "" && errorMessageAT == "") {
+		if (memberId == accessPayload.memberId && memberId == refreshPayload.memberId && memberItem.refreshToken == refreshToken) {
+			let accessToken = "";
+			errorMessageAT = "";
+			
+			// Access-Token
+			try {
+				accessToken = await new Promise((resolve, reject) => {
+					jwt.sign({
+							memberId : memberItem.id,
+							memberName : memberItem.name
+						},
+						config.secret,
+						{
+							expiresIn : '10m'
+						},
+						(err, token) => {
+							if (err) {
+								reject(err);
+							} else {
+								resolve(token);
+							}
+						});
+				});
+			} catch(err) {
+				errorMessageAT = err;
+			}
+			console.log("Access-Token : " + accessToken);
+			console.log("Access-Token Error : " + errorMessageAT);
+			
+			if (errorMessageAT == "") {
+				res.json({success:true, accessToken:accessToken});
+			} else {
+				res.status(401).json({success:false, errormessage:'token sign fail'});
+			}
+		} else {
+			res.status(401).json({success:false, errormessage:'Token is not identical'});
+		}
+	} else if (errorMessageRT != "") {
+		res.status(401).json({success:false, errormessage:'Refresh-Token has expired or invalid signature'});
+	} else if (errorMessageAT != "") {
+		res.status(401).json({success:false, errormessage:'Access-Token is invalid signature'});
 	}
 });
 

@@ -4,7 +4,7 @@ const loginStore = {
 	namespaced: true,
 	state: {
         memberId: '',
-        accessToken: ''
+        accessToken: '',
 	},
 	getters: {
         isLogin(state) {
