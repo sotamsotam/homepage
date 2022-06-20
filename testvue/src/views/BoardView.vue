@@ -49,9 +49,9 @@ export default {
         isEditable() {
             var result = false;
             var isLogin = this.$store.getters['loginStore/isLogin'];
-            if(isLogin) {
+            if (isLogin) {
                 const writer = this.$store.state.loginStore.memberId;
-                if(writer == this.boardItem.wirter) {
+                if (writer == this.boardItem.writer) {
                     result = true;
                 }
             }
