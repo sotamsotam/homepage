@@ -64,23 +64,40 @@
 			<span class="visually-hidden">Next</span>
 		</button>
 	</div>
-	<div class="home">
-		<img alt="Vue logo" src="../assets/logo.png">
-		<HelloWorld msg="Welcome to Your Vue.js App"/>
+	<div class="py-5">
+	<div class="container text-start">
+		<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3">
+			<div class="col" v-for="boardItem in boardList" v-bind:key="boardItem.no">
+				<div class="card">
+					<div class="card-body">
+						<h5 class="card-title">{{boardItem.subject}}</h5>
+						<h6 class="card-subtitle mb-2 text-muted">{{boardItem.writer}}</h6>
+						<div class="d-flex justify-content-between align-items-center">
+							<div class="btn-group">
+								<button type="button" class="btn btn-sm btn-outline-secondary" @click="boardNoClick(boardItem)">보기</button>
+							</div>
+							<small class="text-muted">{{boardItem.writedate}}</small>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
+  </div>
 </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue';
 import * as bootstrap from 'bootstrap';
 
 export default {
 	name: 'Home',
-	components: {
-		HelloWorld
-	},
+	data() {
+    return {
+      boardList : []
+    }
+  },
 	methods : {
 		mainTopCarouselPrevClick() {
 			var mainTopCarousel = document.querySelector('#mainTopCarousel');
@@ -106,8 +123,21 @@ export default {
 				event.target.classList.add("bi-play-fill");
 				carousel.pause();
 			}
-		}
-	}
+		},
+    getBoardList() {
+      this.axios.get('http://localhost:9000/boards').then((res) => {
+        this.boardList = res.data.data;
+      }).catch((err) => {
+        console.log(err);
+      })
+    },
+    boardNoClick(boardItem) {
+      this.$router.push({name: 'BoardView', query: {boardNo: boardItem.no}})
+    }
+	},
+  mounted() {
+    this.getBoardList();
+  }
 };
 </script>
 
